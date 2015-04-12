@@ -11,7 +11,7 @@
 //returns combination of a key
 //assuming key object is sorted
 //assuming key object is an array []
-function combination(entry){
+exports.combination = function(entry){
 	var rv = [];
 	var n = entry.length - 1;
 

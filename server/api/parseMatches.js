@@ -1,17 +1,25 @@
 var _ = require('underscore');
 var fs = require('fs');
- 
-var dir = './sample';
+var combinations = require('./combination').combination; 
+var dir = './single';
  
 function Node(){
     this.pkey;
     this.members = [];
     this.games = 0;
     this.kills = 0;
+    this.avg = 0;
     this.participants = 0;
-    this.nodeLinks = [];
+    this.edges = {};
     this.currentEdge;
  
+    this.getAvg = function(){
+        if(this.games > 0){
+            this.avg = this.kills/ this.games;
+        }
+        return this.avg;
+    }
+
     return this;
 }
  
@@ -91,13 +99,35 @@ function processMatch(body, championMap, nodeMap) {
  
                     _.each(detail.assistingParticipantIds, function(assistants){
                         nodeMap[key].members.push(playerMap[assistants]);
-                        nodeMap[key].nodeLinks.push(new MyEdge(playerMap[assistants], key, 1));
                     });
- 
+
+                    //get combinations of the groups
+                    var children = combinations(groupKey);
+                    var childKey = "";
+                    //console.log("\t" + key);
+                    _.each(children, function(child){
+                        //add nodes if they dont exist
+                        childKey = "";
+                        _.each(child, function(id){
+                            childKey += id + "-";
+                        });
+                        childKey = childKey.slice(0,-1);
+                        //console.log(childKey + nodeMap[childKey]);
+                        if(typeof nodeMap[childKey] == "undefined"){
+                            nodeMap[childKey] = new Node();
+                            nodeMap[childKey].pkey = childKey;
+                            nodeMap[childKey].members = children;
+                            nodeMap[childKey].participants = children.length;
+                            nodeMap[childKey].edges[key] = (new MyEdge(childKey,key,0));
+                        }
+                        else { //add edges if they don't exist
+                            if(nodeMap[childKey].edges[key] == "undefined"){
+                                nodeMap[childKey].edges[key] = new MyEdge(childKey, key, nodeMap[childKey].getAvg());
+                            }
+                        }
+                    });
+                    
                     //avoid self edges
-                    if (nodeMap[key].members.length > 1)
-                        nodeMap[key].nodeLinks.push(new MyEdge(playerMap[detail.killerId], key, 1));
- 
                     nodeMap[key].games = 0;
                     nodeMap[key].kills = 1;
                     nodeMap[key].participants = nodeMap[key].members.length;
@@ -105,9 +135,6 @@ function processMatch(body, championMap, nodeMap) {
                 else{
                     //update old node
                     nodeMap[key].kills++;
-                    _.each(nodeMap[key].nodeLinks, function(link){
-                        link.weight++;
-                    });
                 }
  
                 if (typeof championMap[key] != "undefined") {
@@ -129,70 +156,25 @@ function processMatch(body, championMap, nodeMap) {
 function gephiNodeStuff(nodeMap){
     console.log("nodedef>name VARCHAR,kills DOUBLE,participants DOUBLE,games DOUBLE, avg DOUBLE");
     var keys = [];
+    var gameCount = 0;
     _.each(nodeMap, function(stuff, key){
         keys.push(key);
     });
     keys.sort();
     _.each(keys, function(key){
-        if(nodeMap[key].kills > 0 && nodeMap[key].games > 10) {
+        if(nodeMap[key].kills > 0 && nodeMap[key].games > gameCount) {
             console.log(key + "," + nodeMap[key].kills + "," + nodeMap[key].participants
             + "," + nodeMap[key].games + "," + Math.round((nodeMap[key].kills / nodeMap[key].games) * 1000)/1000);
         }
     });
     console.log("edgedef>node1 VARCHAR,node2 VARCHAR,weight DOUBLE");
     _.each(keys, function(key){
-        if(nodeMap[key].kills > 0 && nodeMap[key].games > 10) {
-            var maxw = -1;
-            var str = '';
-            _.each(nodeMap[key].nodeLinks, function(edge){
-                if(edge.weight > maxw) {
-                    str = edge.fromNode + "," + edge.toNode + "," + edge.weight;
-                    maxw = edge.weight;
-                }
+        if(nodeMap[key].kills > 0 && nodeMap[key].games > gameCount) {
+            _.each(nodeMap[key].edges, function(edge){
+                str = edge.fromNode + "," + edge.toNode + ", 0"; //TODO: change
+                console.log(str);  
             });
-            if(str != '')
-                console.log(str);
         }
     });
 }
  
-function gephiStuff(championMap){
-    console.log("nodedef>name VARCHAR,value DOUBLE");
-    var keys = [];
-    _.each(championMap, function(stuff, key){
-        keys.push(key);
-    });
-    keys.sort();
-    _.each(keys, function(key){
-        console.log(key + "," + championMap[key]);
-    });
-    console.log("edgedef>node1 VARCHAR,node2 VARCHAR");
-    _.each(keys, function(key){
-        var partials = key.split('-');
-        _.each(keys, function(efficiency){
-            if(key != efficiency){
-                var others = efficiency.split('-');
-                if(inefficiencyHelper(partials, others) == true){
-                    console.log(key + ',' + efficiency);
-                }
-            }
-        });
-    });
-}
- 
-function inefficiencyHelper(aList, bList) {
-    if (aList.length + 1 != bList.length)
-        return false;
- 
- 
-    var contains = 0;
-    _.each(aList, function (aPartials) {
-        _.each(bList, function (bPartials) {
-            if (aPartials == bPartials) {
-                contains++;
-            }
-        });
-    });
- 
-    return (contains == aList.length);
-}
