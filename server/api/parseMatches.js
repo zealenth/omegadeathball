@@ -1,7 +1,7 @@
 var _ = require('underscore');
 var fs = require('fs');
 var combinations = require('./combination').combination;
-var dir = '../../../lot_site2/matches';
+var dir = './single';
 
 function Node(){
     this.pkey;
@@ -84,10 +84,6 @@ function processMatch(body, championMap, nodeMap) {
                 });
                 key = key.slice(0,-1);
 
-                if (typeof nodeUpdateMap[key] == "undefined") {
-                    nodeUpdateMap[key] = 0;
-                }
-
                 //so this is wrong
                 //create nodes for children
 
@@ -102,13 +98,19 @@ function processMatch(body, championMap, nodeMap) {
                     });
 
                     //avoid self edges
-                    nodeMap[key].games = 0;
+                    nodeMap[key].games = 1;
+                    nodeUpdateMap[key] = 0;
                     nodeMap[key].kills = 1;
+
                     nodeMap[key].participants = nodeMap[key].members.length;
                 }
                 else{
                     //update old node
                     nodeMap[key].kills++;
+                    if(typeof nodeUpdateMap[key] == "undefined"){
+                        nodeMap[key].games++;
+                        nodeUpdateMap[key] = 0;
+                    }
                 }
 
                 if (typeof championMap[key] != "undefined") {
@@ -122,13 +124,10 @@ function processMatch(body, championMap, nodeMap) {
         });
     });
 
-    _.each(nodeUpdateMap, function(value, key){
-        nodeMap[key].games++;
-    });
     function addChildren( groupKey, key ) {
       var children = combinations(groupKey);
       var childKey = "";
-      //console.log("\t" + key);
+      
       _.each(children, function(child){
         //add nodes if they dont exist
         childKey = "";
@@ -136,7 +135,7 @@ function processMatch(body, championMap, nodeMap) {
           childKey += id + "-";
         });
         childKey = childKey.slice(0,-1);
-        //console.log(childKey + nodeMap[childKey]);
+
         if(typeof nodeMap[childKey] == "undefined"){
           nodeMap[childKey] = new Node();
           nodeMap[childKey].pkey = childKey;
@@ -145,7 +144,7 @@ function processMatch(body, championMap, nodeMap) {
           nodeMap[childKey].edges[key] = (new MyEdge(childKey,key,0));
         }
         else { //add edges if they don't exist
-          if(nodeMap[childKey].edges[key] == "undefined"){
+          if(typeof nodeMap[childKey].edges[key] == "undefined"){
             nodeMap[childKey].edges[key] = new MyEdge(childKey, key, nodeMap[childKey].getAvg());
           }
         }
@@ -159,21 +158,22 @@ function gephiNodeStuff(nodeMap){
     console.log("nodedef>name VARCHAR,kills DOUBLE,participants DOUBLE,games DOUBLE, avg DOUBLE");
     var keys = [];
     var gameCount = 0;
+    var killCount = 0;
     _.each(nodeMap, function(stuff, key){
         keys.push(key);
     });
     keys.sort();
     _.each(keys, function(key){
-        if(nodeMap[key].kills >= 0 && nodeMap[key].games >= gameCount) {
+        if(nodeMap[key].kills >= killCount && nodeMap[key].games >= gameCount) {
             console.log(key + "," + nodeMap[key].kills + "," + nodeMap[key].participants
             + "," + nodeMap[key].games + "," + Math.round((nodeMap[key].kills / nodeMap[key].games) * 1000)/1000);
         }
     });
     console.log("edgedef>node1 VARCHAR,node2 VARCHAR,weight DOUBLE");
     _.each(keys, function(key){
-        if(nodeMap[key].kills >= 0 && nodeMap[key].games >= gameCount) {
+        if(nodeMap[key].kills >= killCount && nodeMap[key].games >= gameCount) {
             _.each(nodeMap[key].edges, function(edge){
-                str = edge.fromNode + "," + edge.toNode + ", 0"; //TODO: change
+                str = edge.fromNode + "," + edge.toNode + ", 1"; //TODO: change
                 console.log(str);
             });
         }
