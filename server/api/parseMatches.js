@@ -64,7 +64,7 @@ function processMatch(body, championMap, nodeMap) {
     _.each(obj.timeline.frames, function(timeslice) {
         //for each event
         _.each(timeslice.events, function(detail){
-            if(detail.eventType == 'CHAMPION_KILL'){
+            if(detail.eventType === 'CHAMPION_KILL'){
                 var key = "";
                 var groupKey = [];
                 //don't care about neutral monsters or unknown events?
@@ -87,7 +87,7 @@ function processMatch(body, championMap, nodeMap) {
                 //so this is wrong
                 //create nodes for children
 
-                if(typeof nodeMap[key] == "undefined"){
+                if(typeof nodeMap[key] === 'undefined'){
                     //create a new node
                     nodeMap[key] = new Node();
                     nodeMap[key].pkey = key;
@@ -107,13 +107,13 @@ function processMatch(body, championMap, nodeMap) {
                 else{
                     //update old node
                     nodeMap[key].kills++;
-                    if(typeof nodeUpdateMap[key] == "undefined"){
+                    if(typeof nodeUpdateMap[key] === 'undefined'){
                         nodeMap[key].games++;
                         nodeUpdateMap[key] = 0;
                     }
                 }
 
-                if (typeof championMap[key] != "undefined") {
+                if (typeof championMap[key] !== 'undefined') {
                     championMap[key]++;
                 }
                 else {
@@ -127,7 +127,7 @@ function processMatch(body, championMap, nodeMap) {
     function addChildren( groupKey, key ) {
       var children = combinations(groupKey);
       var childKey = "";
-      
+
       _.each(children, function(child){
         //add nodes if they dont exist
         childKey = "";
@@ -136,7 +136,7 @@ function processMatch(body, championMap, nodeMap) {
         });
         childKey = childKey.slice(0,-1);
 
-        if(typeof nodeMap[childKey] == "undefined"){
+        if(typeof nodeMap[childKey] === 'undefined'){
           nodeMap[childKey] = new Node();
           nodeMap[childKey].pkey = childKey;
           nodeMap[childKey].members = children;
@@ -144,7 +144,7 @@ function processMatch(body, championMap, nodeMap) {
           nodeMap[childKey].edges[key] = (new MyEdge(childKey,key,0));
         }
         else { //add edges if they don't exist
-          if(typeof nodeMap[childKey].edges[key] == "undefined"){
+          if(typeof nodeMap[childKey].edges[key] === 'undefined'){
             nodeMap[childKey].edges[key] = new MyEdge(childKey, key, nodeMap[childKey].getAvg());
           }
         }

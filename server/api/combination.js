@@ -18,13 +18,13 @@ exports.combination = function(entry){
 		while(n >= 0){
 			var currentCombination = [];
 			for(var i = 0; i < entry.length; i++){
-				if(i != n){
+				if(i !== n){
 					currentCombination.push(entry[i]);
 				}
 			}
 			rv.push(currentCombination);
 			n--;
 		}
-	}	
+	}
 	return rv;
 }
