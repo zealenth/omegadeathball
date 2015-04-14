@@ -1,3 +1,5 @@
+'use strict';
+
 var module = angular.module( 'urfApp' );
 
 module.controller( 'championViewCtrl', [ '$scope', '$state', function( $scope, $state ) {

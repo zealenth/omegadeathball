@@ -6,6 +6,7 @@
 'use strict';
 
 var Thing = require('../api/thing/thing.model');
+var Node = require('../api/node/node.model');
 
 
 Thing.find({}).remove(function() {
@@ -27,5 +28,19 @@ Thing.find({}).remove(function() {
   },{
     name : 'Deployment Ready',
     info : 'Easily deploy your app to Heroku or Openshift with the heroku and openshift subgenerators'
+  });
+});
+
+Node.find({}).remove(function() {
+  Node.create({
+    pkey: '92',
+    members: [ [ 412 ], [ 92 ] ],
+    games: 1,
+    kills: 2,
+    avg: 0,
+    participants: 2,
+    edges:
+    { '412-92': { fromNode: '92', toNode: '412-92', weight: 1 },
+      '55-92': { fromNode: '92', toNode: '55-92', weight: 1 } }
   });
 });

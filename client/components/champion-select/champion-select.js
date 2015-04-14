@@ -1,3 +1,5 @@
+'use strict';
+
 var module = angular.module( 'urfApp' );
 
 var championSelectCtrl = function( $scope ) {
@@ -17,4 +19,4 @@ module
         onSelect: '&'
       },
       templateUrl: 'app/components/champion-select/champion-select.tmpl.html' };
-  } );;
+  } );
