@@ -8,9 +8,7 @@ var NodeSchema = new Schema({
   members : [String],
   games : Number,
   kills : Number,
-  avg : Number,
-  participants : Number,
-  edges : { type: String }
+  participants : Number
 });
 
 module.exports = mongoose.model('Node', NodeSchema);

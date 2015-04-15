@@ -7,6 +7,7 @@
 
 var Thing = require('../api/thing/thing.model');
 var Node = require('../api/node/node.model');
+var Edge = require('../api/edge/edge.model');
 
 
 Thing.find({}).remove(function() {
@@ -34,13 +35,28 @@ Thing.find({}).remove(function() {
 Node.find({}).remove(function() {
   Node.create({
     pkey: '92',
-    members: [ [ 412 ], [ 92 ] ],
+    members: [ 92 ],
     games: 1,
     kills: 2,
-    avg: 0,
-    participants: 2,
-    edges:
-    { '412-92': { fromNode: '92', toNode: '412-92', weight: 1 },
-      '55-92': { fromNode: '92', toNode: '55-92', weight: 1 } }
+    participants: 2
   });
 });
+
+//edgeId: String,
+//from: String,
+//to: String,
+//weight: Number
+Edge.find({}).remove(function() {
+  Edge.create({
+    edgeId: '92:92-181',
+    from: '92',
+    to: '92-181',
+    weight: 2
+  }, {
+    edgeId: '92:92-81',
+    from: '92',
+    to: '92-81',
+    weight: 55
+  });
+});
+
