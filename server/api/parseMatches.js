@@ -39,8 +39,8 @@ function gephiNodeStuff(nodeMap, edgeMap){
   keys.sort();
   _.each(keys, function(key){
     if(nodeMap[key].kills >= killCount && nodeMap[key].games >= gameCount) {
-      console.log(key + "," + nodeMap[key].kills + "," + nodeMap[key].participants
-      + "," + nodeMap[key].games + "," + Math.round((nodeMap[key].kills / nodeMap[key].games) * 1000)/1000);
+      console.log(key + "," + nodeMap[key].kills + "," + nodeMap[key].participants +
+      "," + nodeMap[key].games + "," + Math.round((nodeMap[key].kills / nodeMap[key].games) * 1000)/1000);
     }
   });
   console.log("edgedef>node1 VARCHAR,node2 VARCHAR,weight DOUBLE");

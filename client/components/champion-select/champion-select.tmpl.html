@@ -1,3 +1,6 @@
 <div>
-
+  <input style="width:135px;" type="text" ng-model="ctrl.filter" />
+  <div class="champion-select">
+    <div class="champion-item" ng-repeat="champ in ctrl.champions | filter : ctrl.filter | orderBy : 'name'" ng-click="ctrl.championId = champ.id"><a>{{champ.name}}</a></div>
+  </div>
 </div>

@@ -1,15 +1,19 @@
 'use strict';
 
+angular.module( 'urfApp.models', [] );
+
 angular.module('urfApp', [
   'ngCookies',
   'ngResource',
   'ngSanitize',
   'ui.router',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'urfApp.models'
 ])
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     $urlRouterProvider
-      .otherwise('/');
+      .otherwise('/urf');
 
-    $locationProvider.html5Mode(true);
+    /*$locationProvider.html5Mode(true);*/
+    console.log( $locationProvider );
   });

@@ -4,24 +4,30 @@ angular.module('urfApp')
   .config(function ($stateProvider) {
     $stateProvider
       .state('main', {
-        url: '/',
+        url: '/urf',
         templateUrl: 'app/main/main.html',
         controller: 'MainCtrl'
       })
-      .state('champ', {
+      .state('main.champ', {
         url: '/champ',
         templateUrl: 'app/champion/champion.html'
       })
-      .state('champ.id', {
+      .state('main.champ.id', {
         url: '/:id',
-        templateUrl: 'app/champion/champ-stats.html'
+        templateUrl: 'app/champion/champion-stats.html',
+        controller: [ '$scope','$stateParams', function( $scope, $stateParams ) {
+          $scope.championId = $stateParams.id;
+        } ]
       })
-      .state('team', {
+      .state('main.team', {
         url: '/team',
         templateUrl: 'app/team/team.html'
       })
-      .state('team.id', {
+      .state('main.team.id', {
         url: '/:id',
-        templateUrl: 'app/team/team-stats.html'
+        templateUrl: 'app/team/team-stats.html',
+        controller: [ '$scope','$stateParams', function( $scope, $stateParams ) {
+          $scope.teamId = $stateParams.id;
+        } ]
       });
   });
