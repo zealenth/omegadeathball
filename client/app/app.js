@@ -8,7 +8,9 @@ angular.module('urfApp', [
   'ngSanitize',
   'ui.router',
   'ui.bootstrap',
-  'urfApp.models'
+  'urfApp.models',
+  'ngDragDrop'
+
 ])
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     $urlRouterProvider

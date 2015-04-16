@@ -1,3 +1,23 @@
 <div class="team-select">
+  <div class="team-select-left">
+    <input type="text" ng-model="ctrl.leftFilter" style="width:150px;"/>
+    <div class="team-select-left-container">
+      <div ng-repeat="champ in ctrl.champions | filter : ctrl.leftFilter | orderBy: 'name'"
+           data-drag="{{champ.id}}" data-jqyoui-options="{appendTo: 'body',containment: 'window',scroll: false,helper: 'clone'}"
+           jqyoui-draggable="{animate:true, onStop: 'onDropCallback'}" ng-model="ctrl.champions">
+        {{champ.name}}
+      </div>
+    </div>
 
+  </div>
+  <div class="team-select-middle">
+    <input type="button" value=">" />
+    <input type="button" value="<" />
+  </div>
+  <div class="team-select-right">
+    <div class="team-select-right-container"  jqyoui-droppable="{ onDrop: 'onDropCallback'}" data-drop="true" ng-model="ctrl.selectedChampions">
+      <div ng-repeat="champ in ctrl.selectedChampions">{{champ.name}}</div>
+    </div>
+  </div>
+  <div style="clear:both;"></div>
 </div>

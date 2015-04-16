@@ -1,3 +1,31 @@
 .team-select {
+  .team-select-left {
+    float:left;
+    width: 150px;
+    height:200px;
+    margin-left:8px;
+    border: 1px solid black;
+  }
+  .team-select-left-container {
+    height:175px;
+    overflow-y: auto;
+  }
+  .team-select-middle {
+    float:left;
+    width:30px;
+    height:200px;
 
+  }
+
+  .team-select-right {
+    float:left;
+    width: 150px;
+    height:200px;
+    overflow-y: auto;
+    margin-right:8px;
+    border: 1px solid black;
+  }
+  .team-select-right-container {
+
+  }
 }
