@@ -18,11 +18,7 @@ module
       scope: {
         championId: '='
       },
-<<<<<<< HEAD
-      templateUrl: 'app/components/champion-select/champion-select.tmpl.html' };
-=======
       bindToController: true,
       controllerAs: 'ctrl',
       templateUrl: 'components/champion-select/champion-select.tmpl.html' };
->>>>>>> bunch of changes
   } );

@@ -2,7 +2,6 @@ var _ = require('underscore');
 var combinations = require('./combination').combination;
 
 function Node(){
-  this.pkey;
   this.members = [];
   this.games = 0;
   this.kills = 0;
@@ -37,7 +36,7 @@ exports.processMatch = function(body, nodeMap, edgeMap) {
         var key = "";
         var groupKey = [];
         //don't care about neutral monsters or unknown events?
-        if(detail.killerId == 0)
+        if(detail.killerId === 0)
           return;
 
         groupKey.push(playerMap[detail.killerId]);

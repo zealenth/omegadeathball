@@ -10,7 +10,7 @@ var TeamSelectCtrl = function( $scope, ChampionModel ) {
 TeamSelectCtrl.$inject =  [ '$scope', 'ChampionModel'  ];
 
 module
-  .controller( 'teamSelectCtrl', TeamnSelectCtrl )
+  .controller( 'teamSelectCtrl', TeamSelectCtrl )
   .directive( 'teamSelect', function() {
     return {
       controller: 'teamSelectCtrl',
