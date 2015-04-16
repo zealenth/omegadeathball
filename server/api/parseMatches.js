@@ -1,7 +1,7 @@
 var _ = require('underscore');
 var fs = require('fs');
 var parser = require('./parse.controller');
-var dir = './single';
+var dir = './matches';
 
 fs.readdir(dir, function(err, data){
   if (err) {
@@ -10,11 +10,17 @@ fs.readdir(dir, function(err, data){
   var nodeMap = {};
   var edgeMap = {};
 
+  var count = 0;
+
   _.each(data, function(name) {
     var contents;
     try {
+      if(count % 100 == 0){
+        console.error("processed matches: " + count);
+      }
       contents = fs.readFileSync(dir + '/' + name);
       parser.processMatch(contents, nodeMap, edgeMap);
+      count++;
     } catch (e) {
       console.log(e);
     }

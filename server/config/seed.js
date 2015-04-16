@@ -12,6 +12,7 @@ var Parser = require('../api/parse.controller');
 
 var _ = require('underscore');
 var fs = require('fs');
+var async = require('async');
 
 var dir = './server/api/matches';
 
@@ -48,44 +49,31 @@ Node.find({}).remove(function() {
       var nodeMap = {};
       var edgeMap = {};
 
-      _.each(data, function(name) {
+      _.each(data, function (name) {
         var contents;
         try {
           contents = fs.readFileSync(dir + '/' + name);
           Parser.processMatch(contents, nodeMap, edgeMap);
 
-          stuffServer(nodeMap, edgeMap);
-          nodeMap = {};
-          edgeMap = {};
         } catch (e) {
           console.log(e);
         }
       });
+
+      stuffServer(nodeMap, edgeMap);
     });
     console.log("\tRogue edges gone!");
   });
 });
 
-
 function stuffServer(nodeMap, edgeMap){
   _.each(nodeMap, function(node){
-    //var instance = new Node();
-    //instance.pkey = node.pkey;
-    //instance.members = node.members;
-    //instance.games = node.games;
-    //instance.kills = node.kills;
-    //instance.participants = node.participants;
-    //instance.save(function (err) {});
-
-    Node.findOneAndUpdate({
+    Node.create({
       pkey: node.pkey,
       members: node.members,
       games: node.games,
       kills: node.kills,
       participants: node.participants
-    }, {upsert:true}, function(err){
-      if (err) console.log( err );
-      console.log("succesfully saved");
     });
   });
 
