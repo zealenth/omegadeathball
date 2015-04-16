@@ -14,7 +14,7 @@ var Node = require('./node.model');
 
 // Get list of nodes
 exports.index = function(req, res) {
-  Node.find(function (err, nodes) {
+  Node.find(true, '-_id -__v', function (err, nodes) {
     if(err) { return handleError(res, err); }
     return res.json(200, nodes);
   });

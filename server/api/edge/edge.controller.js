@@ -15,7 +15,7 @@ var Edge = require('./edge.model');
 
 // Get list of edges
 exports.index = function(req, res) {
-  Edge.find('-_id', function (err, edges) {
+  Edge.find(true,'-_id -__v', function (err, edges) {
     if(err) { return handleError(res, err); }
     return res.json(200, edges);
   });
