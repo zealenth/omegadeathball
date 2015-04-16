@@ -1,0 +1,10 @@
+.champion-select {
+  height: 300px;
+  overflow-y: auto;
+  width: 150px;
+  .champion-item {
+    a {
+      cursor: pointer;
+    }
+  }
+}

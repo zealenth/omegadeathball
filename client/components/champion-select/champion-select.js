@@ -1,22 +1,28 @@
 'use strict';
-
 var module = angular.module( 'urfApp' );
 
-var championSelectCtrl = function( $scope ) {
-
+var ChampionSelectCtrl = function( $scope, ChampionModel ) {
+  this.champions = _.values( ChampionModel.prototype.CachedModels );
+  this.filter = '';
+  return this;
 };
 
-championSelectCtrl.prototype.$inject( '$scope' );
+ChampionSelectCtrl.$inject =  [ '$scope', 'ChampionModel'  ];
 
 module
-  .controller( 'championSelectCtrl', championSelectCtrl )
+  .controller( 'championSelectCtrl', ChampionSelectCtrl )
   .directive( 'championSelect', function() {
     return {
       controller: 'championSelectCtrl',
       restrict: 'E',
       scope: {
-        championId: '=',
-        onSelect: '&'
+        championId: '='
       },
+<<<<<<< HEAD
       templateUrl: 'app/components/champion-select/champion-select.tmpl.html' };
+=======
+      bindToController: true,
+      controllerAs: 'ctrl',
+      templateUrl: 'components/champion-select/champion-select.tmpl.html' };
+>>>>>>> bunch of changes
   } );

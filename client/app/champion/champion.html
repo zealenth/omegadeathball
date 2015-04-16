@@ -1,4 +1,5 @@
 <div ng-controller="championViewCtrl">
-  <champion-select champion-id="selectedChamp" on-select="changeChampion"></champion-select>
-  <ui-view></ui-view>
+  <champion-select style="float:left;" champion-id="selectedChamp" on-select="changeChampion"></champion-select>
+  <div style="float:left;" ui-view></div>
+  <div style="clear:both;"></div>
 </div>

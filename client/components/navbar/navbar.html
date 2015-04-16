@@ -7,12 +7,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a href="/" class="navbar-brand">urf</a>
+      <a style="cursor:pointer;" ng-click="changeState( 'main' )" class="navbar-brand">urf</a>
     </div>
     <div collapse="isCollapsed" class="navbar-collapse collapse" id="navbar-main">
       <ul class="nav navbar-nav">
         <li ng-repeat="item in menu" ng-class="{active: isActive(item.state)}">
-            <a ng-click="changeState( item.state )">{{item.title}}</a>
+            <a style="cursor:pointer;" ng-click="changeState( item.state )">{{item.title}}</a>
         </li>
       </ul>
     </div>
