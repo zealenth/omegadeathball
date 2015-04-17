@@ -4,11 +4,9 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var TreeSchema = new Schema({
-  l1: [],
-  l2: [],
-  l3: [],
-  l4: [],
-  l5: []
+  pkey: String,
+  nodes: [],
+  edges: []
 });
 
 module.exports = mongoose.model('Tree', TreeSchema);
