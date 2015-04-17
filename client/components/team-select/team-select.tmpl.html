@@ -12,12 +12,15 @@
 
   </div>
   <div class="team-select-middle">
-    <input type="button" value=">" />
-    <input type="button" value="<" />
+    <input type="button" value=">" ng-click="ctrl.moveChampsRight()" />
+    <input type="button" value="<" ng-click="ctrl.moveChampsLeft()" />
   </div>
   <div class="team-select-right">
     <div class="team-select-right-container"  jqyoui-droppable="{ onDrop: 'onDropCallback'}" data-drop="true" ng-model="ctrl.selectedChampions">
-      <div ng-repeat="champ in ctrl.selectedChampions">{{champ.name}}</div>
+      <div ng-repeat="champ in ctrl.selectedChampions"
+           ng-click="ctrl.addHilightedChamp( champ.id )" ng-class="ctrl.selectedClass( champ.id )">
+           {{champ.name}}
+       </div>
     </div>
   </div>
   <div style="clear:both;"></div>

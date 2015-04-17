@@ -25,7 +25,7 @@ var TeamSelectCtrl = function( $scope, ChampionModel ) {
   this.addHilightedChamp = function( champ ) {
     var direction = 'left';
 
-    if( _.indexOf( this.selectedChampions, function( c ) { return c.id === champ; } ) ) {
+    if( _.findIndex( this.selectedChampions, function( c ) { return c.id === champ; } ) !== -1 ) {
       direction = 'right';
     }
     if( direction !== this.lastHilightDirection ) {
@@ -41,10 +41,26 @@ var TeamSelectCtrl = function( $scope, ChampionModel ) {
   };
 
   this.moveChampsLeft = function() {
-
+    var self = this;
+    _.each( this.hilightedChampions, function( c ) {
+      var i = _.findIndex( self.selectedChampions, function( e ) { return e.id === c; } );
+      if( i !== -1 ) {
+        var m = self.selectedChampions.splice( i, 1 );
+        self.champions.push( m[ 0 ] );
+      }
+    } );
+    this.hilightedChampions = [];
   };
   this.moveChampsRight = function() {
-
+    var self = this;
+    _.each( this.hilightedChampions, function( c ) {
+      var i = _.findIndex( self.champions,  function( e ) { return e.id === c; } );
+      if( i !== -1 ) {
+        var m = self.champions.splice( i, 1 );
+        self.selectedChampions.push( m[ 0 ] );
+      }
+    } );
+    this.hilightedChampions = [];
   };
 
   this.selectedClass = function( champ ) {
