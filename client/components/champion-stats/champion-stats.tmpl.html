@@ -1,3 +1,26 @@
 <div class="champion-stats">
-  {{ctrl.champion.name}}
+  <h2>{{ctrl.champion.name}}</h2>
+  win rate: {{ctrl.selectedUrfStats.champions.wins / ctrl.selectedUrfStats.champions.games}}
+  <div style="max-height:300px; overflow-y:scroll">
+    <h4>1v1 Statistics:</h4>
+    <table>
+      <tr>
+        <td>
+          <span style="font-width: bold;">Champion</span>
+        </td>
+        <td>
+          <span style="font-width: bold;">Net 1v1 kills</span>
+        </td>
+      </tr>
+      <tr ng-repeat=" stat in ctrl.selectedUrfStats.kills | orderBy : 'count' : true">
+        <td>
+          <a>{{ctrl.getChampName( stat.target );}}</a>
+        </td>
+        <td>
+          {{stat.count}}
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div style="clear:both;"></div>
 </div>
