@@ -1,4 +1,4 @@
-var Parser = require('../api/parse.controller');
+var Parser = require('./../api/parse.controller.js');
 var _ = require('underscore');
 var fs = require('fs');
 

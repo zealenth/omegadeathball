@@ -1,7 +1,7 @@
 var _ = require('underscore');
 var fs = require('fs');
-var parser = require('./parse.controller');
-var dir = '/home/code/vmshare/match-2/matches';
+var parser = require('./../api/parse.controller.js');
+var dir = '/home/code/vmshare/matches';
 
 fs.readdir(dir, function(err, data){
   if (err) {
