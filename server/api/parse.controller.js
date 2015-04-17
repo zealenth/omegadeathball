@@ -20,9 +20,10 @@ function sortNumber(a,b) {
 }
 
 exports.processMatch = function(body, nodeMap, edgeMap) {
+  var obj;
   if(body){
     try{
-      var obj = JSON.parse(body);
+      obj = JSON.parse(body);
     }
     catch(e){
       throw e;

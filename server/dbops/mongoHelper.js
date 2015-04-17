@@ -18,7 +18,7 @@ fs.readdir(dir, function(err, data){
   _.each(data, function (name) {
     var contents;
     try {
-      if(count % 100 == 0){
+      if(count % 100 === 0){
         console.error("processed matches: " + count);
       }
       contents = fs.readFileSync(dir + '/' + name);
