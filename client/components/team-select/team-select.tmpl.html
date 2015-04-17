@@ -4,7 +4,8 @@
     <div class="team-select-left-container">
       <div ng-repeat="champ in ctrl.champions | filter : ctrl.leftFilter | orderBy: 'name'"
            data-drag="{{champ.id}}" data-jqyoui-options="{appendTo: 'body',containment: 'window',scroll: false,helper: 'clone'}"
-           jqyoui-draggable="{animate:true, onStop: 'onDropCallback'}" ng-model="ctrl.champions">
+           jqyoui-draggable="{animate:true, onStop: 'onDropCallback'}" ng-model="ctrl.champions"
+           ng-click="ctrl.addHilightedChamp( champ.id )" ng-class="ctrl.selectedClass( champ.id )">
         {{champ.name}}
       </div>
     </div>
