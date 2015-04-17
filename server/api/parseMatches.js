@@ -1,7 +1,7 @@
 var _ = require('underscore');
 var fs = require('fs');
 var parser = require('./parse.controller');
-var dir = './matches';
+var dir = '/home/code/vmshare/match-2/matches';
 
 fs.readdir(dir, function(err, data){
   if (err) {
@@ -22,7 +22,8 @@ fs.readdir(dir, function(err, data){
       parser.processMatch(contents, nodeMap, edgeMap);
       count++;
     } catch (e) {
-      console.log(e);
+      console.error(name);
+      console.error(e);
     }
   });
   gephiNodeStuff(nodeMap, edgeMap);

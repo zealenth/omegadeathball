@@ -20,7 +20,22 @@ function sortNumber(a,b) {
 }
 
 exports.processMatch = function(body, nodeMap, edgeMap) {
-  var obj = JSON.parse(body);
+  if(body){
+    try{
+      var obj = JSON.parse(body);
+    }
+    catch(e){
+      throw e;
+    }
+  }
+  else {
+    return;
+  }
+
+  if(!obj.timeline.frames){
+    throw "no frames... that's just dumb";
+  }
+
   var playerMap = {};
 
   _.each(obj.participants, function(player) {
