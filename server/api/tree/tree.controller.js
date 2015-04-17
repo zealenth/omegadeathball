@@ -28,7 +28,7 @@ exports.show = function(req, res) {
         _.each(edge, function(e){
           queue.push(
             function(callback) {
-              Node.findOne({pkey : e}, "-_id -__v", function (err, node) {
+              Node.findOne({pkey : e.to}, "-_id -__v", function (err, node) {
                 callback(err, node);
               });
             }
@@ -36,9 +36,15 @@ exports.show = function(req, res) {
         });
         async.parallel(queue, function(err, results){
           if(err) { return handleError(res, err); }
-          console.log(results);
           grow(tree, meh);
-          console.log(edge);
+
+          _.each(results, function(n2){
+            var meh = new Branch();
+            meh.node = n2;
+            meh.edges = [];
+            grow(tree, meh);
+          });
+          console.log(results);
           return res.json(tree);
         });
     });
