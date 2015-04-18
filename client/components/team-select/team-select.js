@@ -11,11 +11,9 @@ var TeamSelectCtrl = function( $scope, ChampionModel ) {
 
   $scope.onDropCallback = function() {
     var champ = arguments[1].helper[0].getAttribute( 'data-drag' );
-    console.log(champ);
+
     //remove champ from champions
     var champIndex = _.findIndex( self.champions, function(elem) { return parseInt(  elem.id ) === parseInt( champ ); } );
-    console.log( champIndex );
-    console.log(self.champions);
     self.selectedChampions.push( self.champions[ champIndex ] );
     self.champions.splice( champIndex, 1 );
     self.hilightedChampions = [];
