@@ -12,7 +12,7 @@ function TeamStatsCtrl( $scope, Model, $element, ChampionModel ) {
         dataNodes = dataNodes.concat( n2 );
       } );
     } );
-    self.initD3( $element, dataNodes );
+    //self.initD3( $element, dataNodes );
     self.initD3Graph( $element, dataNodes );
   } );
   this.teamData = teamModel.model;
@@ -75,6 +75,10 @@ TeamStatsCtrl.prototype.initD3 = function( $element, dataNodes ) {
       .style("text-anchor", "middle")
       .text(function(d) { return d.teamName; });
 
+  var link = svg.selectAll("line")
+    .data(self.teamData.edges)
+    .enter().append("svg:line");
+
     var force = d3.layout.force();
 
     draw('Champion Kills By Group');
@@ -102,10 +106,18 @@ TeamStatsCtrl.prototype.initD3 = function( $element, dataNodes ) {
           o.y += ((f.y + (f.dy / 2)) - o.y) * e.alpha;
           o.x += ((f.x + (f.dx / 2)) - o.x) * e.alpha;
         }
+
+        var k = 6 * e.alpha;
+
         nodes.each(collide(.11))
           .attr("transform", function(d){
             return "translate(" + d.x + "," + d.y + ")";
-          })
+          } );
+
+        link.attr("x1", function(d) { return d.x - k; })
+          .attr("y1", function(d) { return d.y - k; })
+          .attr("x2", function(d) { return d.x + k; })
+          .attr("y2", function(d) { return d.y + k; });
       }
     }
 
@@ -174,6 +186,8 @@ TeamStatsCtrl.prototype.initD3 = function( $element, dataNodes ) {
 TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
   var mapper = {};
   var incr = 0;
+  var maxGames = d3.max( dataNodes, function(d) { return d.games; } );
+  var gameFill = d3.scale.ordinal().range(['#827d92','#827354','#523536','#72856a','#2a3285','#383435'])
 
   var self = this;
   var w = 900,
@@ -217,9 +231,9 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
     node
       .append("circle")
       .attr("class", "node")
-      .attr("r", function(d) { return 20 + (d.kills / d.games * 5) })
-      .style("fill", function(d) { return fill(d.group); })
-      .style("stroke", function(d) { return d3.rgb(fill(d.group)).darker(); });
+      .attr("r", function(d) { return 10 + (d.kills / d.games * 10) })
+      .style("stroke", function(d) { return d3.rgb(fill(d.group)).darker(); })
+      .style("fill", function (d) { return gameFill( d.games ); });
 
     node.append( 'text' )
       .attr("dy", ".3em")
