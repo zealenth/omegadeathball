@@ -3,6 +3,7 @@ var fs = require( 'fs' );
 var _ = require( 'underscore' );
 
 var mongoose = require('mongoose');
+var apiKey = '';
 
 /* DATABSE SETUP */
 mongoose.connect('mongodb://localhost/projects');
@@ -72,7 +73,7 @@ function fetchMatchDetails() {
   if( !gameQueue.length )
     return;
   var matchUrl = 'https://na.api.pvp.net/api/lol/na/v2.2/match/' +
-    gameQueue.shift() + '?includeTimeline=true&api_key=714e7824-dee1-49dd-87fc-37137d6ff708';
+    gameQueue.shift() + '?includeTimeline=true&api_key=' + apiKey;
   request( matchUrl, function( error, resp, body ) {
     if( error ) {
       return;
