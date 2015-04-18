@@ -1,3 +1,4 @@
+//jquery hack, we don't have bootstrop popovers:
 
 
 function TeamStatsCtrl( $scope, Model, $element, ChampionModel ) {
@@ -31,7 +32,7 @@ TeamStatsCtrl.prototype.initD3 = function( $element ) {
       dataNodes[j].x = Math.random() * width;
       dataNodes[j].y = Math.random() * height;
       dataNodes[j].teamName = dataNodes[j].members.map( function( e ) {
-        return self.champions[e].name;
+        return self.champions[e].name.substring(0,3);
         } )
         .join( '-' );
     }
@@ -133,8 +134,10 @@ TeamStatsCtrl.prototype.initD3 = function( $element ) {
         trigger: 'manual',
         html : true,
         content: function() {
-          return "Make: " + d.make + "<br/>Model: " + d.model +
-            "<br/>Trans: " + d.trans + "<br/>MPG: " + d.comb;
+          return "Team: <br/>" + d.members.map( function( e ) {
+            return ' ' + self.champions[e].name;
+          } ).join( '<br/>' ) + "<br/>Kills per game: " + d.kills / d.games +
+            "<br/>Games: " + d.games;
         }
       });
       $(this).popover('show')
