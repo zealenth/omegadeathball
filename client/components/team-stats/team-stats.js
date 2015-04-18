@@ -1,18 +1,20 @@
 
 
-function TeamStatsCtrl( $scope, Model, $element ) {
+function TeamStatsCtrl( $scope, Model, $element, ChampionModel ) {
   var self = this;
+  this.champions = ChampionModel.prototype.CachedModels;
   var teamModel = new Model( { url: '/api/trees/' + this.teamId } );
   teamModel.fetch().then( function() {
     self.initD3( $element );
-    self.initD3Graph( $element );
+    //self.initD3Graph( $element );
   } );
   this.teamData = teamModel.model;
   return this;
 }
 
 TeamStatsCtrl.prototype.initD3 = function( $element ) {
-    var width = 800, height = 800;
+    var self = this;
+    var width = 500, height = 500;
     var fill = d3.scale.ordinal().range(['#827d92','#827354','#523536','#72856a','#2a3285','#383435'])
     var svg = d3.select( $element[0] ).append("svg")
       .attr("width", width)
@@ -25,10 +27,13 @@ TeamStatsCtrl.prototype.initD3 = function( $element ) {
     } );
 
     for (var j = 0; j < dataNodes.length; j++) {
-      dataNodes[j].radius = +dataNodes[j].kills / dataNodes[j].games * 5;
+      dataNodes[j].radius = +dataNodes[j].kills / dataNodes[j].games * 12;
       dataNodes[j].x = Math.random() * width;
       dataNodes[j].y = Math.random() * height;
-      dataNodes[j ].teamName = dataNodes[j].members.join( '-' );
+      dataNodes[j].teamName = dataNodes[j].members.map( function( e ) {
+        return self.champions[e].name;
+        } )
+        .join( '-' );
     }
 
     var padding = 2;
@@ -36,7 +41,7 @@ TeamStatsCtrl.prototype.initD3 = function( $element ) {
 
     var getCenters = function (vname, size) {
       var centers, map;
-      centers = [ { name: 'stuff', value: 1 } ]; /* _.uniq(_.pluck(data, vname)).map(function (d) {
+      centers = [ { name: 'Champion Kills By Group', value: 1 } ]; /* _.uniq(_.pluck(data, vname)).map(function (d) {
         return {name: d, value: 1};
       });*/
 
@@ -46,28 +51,39 @@ TeamStatsCtrl.prototype.initD3 = function( $element ) {
       return centers;
     };
 
-    var nodes = svg.selectAll("circle")
-      .data(dataNodes);
-
-    nodes.enter().append("circle")
+    var nodes = svg.selectAll("g.node")
+      .data(dataNodes)
+      .enter()
+      .append('g')
       .attr("class", "node")
-      .attr("cx", function (d) { return d.x; })
-      .attr("cy", function (d) { return d.y; })
+      .attr("transform", function(d){
+        return "translate(" + d.x + "," + d.y + ")";
+      });
+
+    nodes
+      .append("circle")
+      .attr("class", "node")
+
       .attr("r", function (d) { return d.radius; })
       .style("fill", function (d) { return fill(d.teamName); })
       .on("mouseover", function (d) { showPopover.call(this, d); })
-      .on("mouseout", function (d) { removePopovers(); })
+      .on("mouseout", function (d) { removePopovers(); });
+
+  nodes.append( 'text' )
+    .attr("dy", ".3em")
+    .style("text-anchor", "middle")
+    .text(function(d) { return d.teamName; });
 
     var force = d3.layout.force();
 
-    draw('stuff');
+    draw('Champion Kills By Group');
 
     $( ".btn" ).click(function() {
       draw(this.id);
     });
 
     function draw (varname) {
-      var centers = getCenters(varname, [800, 800]);
+      var centers = getCenters(varname, [width, height]);
       force.on("tick", tick(centers, varname));
       labels(centers)
       force.start();
@@ -86,8 +102,9 @@ TeamStatsCtrl.prototype.initD3 = function( $element ) {
           o.x += ((f.x + (f.dx / 2)) - o.x) * e.alpha;
         }
         nodes.each(collide(.11))
-          .attr("cx", function (d) { return d.x; })
-          .attr("cy", function (d) { return d.y; });
+          .attr("transform", function(d){
+            return "translate(" + d.x + "," + d.y + ")";
+          })
       }
     }
 
@@ -236,7 +253,7 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element ) {
 };
 
 
-TeamStatsCtrl.$inject = [ '$scope', 'Model', '$element' ];
+TeamStatsCtrl.$inject = [ '$scope', 'Model', '$element', 'ChampionModel' ];
 
 angular.module( 'urfApp' )
   .controller( 'teamStatsCtrl', TeamStatsCtrl )
