@@ -24,10 +24,10 @@ angular.module('urfApp')
         templateUrl: 'app/team/team.html'
       })
       .state('main.team.id', {
-        url: '/:id',
+        url: '/:team',
         templateUrl: 'app/team/team-stats.html',
         controller: [ '$scope','$stateParams', function( $scope, $stateParams ) {
-          $scope.teamId = $stateParams.id;
+          $scope.teamId = $stateParams.team;
         } ]
       });
   });

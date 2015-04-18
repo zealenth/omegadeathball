@@ -4,7 +4,7 @@ var module = angular.module( 'urfApp' );
 var TeamSelectCtrl = function( $scope, ChampionModel ) {
   var self = this;
   this.champions = _.values( ChampionModel.prototype.CachedModels );
-  this.hilightedChampions = [];
+  this.hilightedChampions = this.teamId ? this.teamId.split( '-' ).map( function( e ) { return parseInt( e ); } ) : [];
   this.selectedChampions = [];
   this.filter = '';
   this.lastHilightDirection = 'left';
@@ -18,8 +18,20 @@ var TeamSelectCtrl = function( $scope, ChampionModel ) {
     console.log(self.champions);
     self.selectedChampions.push( self.champions[ champIndex ] );
     self.champions.splice( champIndex, 1 );
-
+    self.hilightedChampions = [];
+    self.updateSelectedChampionIds();
     $scope.$digest();
+  };
+
+  this.updateSelectedChampionIds = function() {
+    var self = this;
+    self.teamId = self.selectedChampions.map( function( e ) { return e.id } )
+      .sort()
+      .join( '-' );
+    if( !$scope.$$phase && !$scope.$root.$$phase )
+    {
+      $scope.$apply();
+    }
   };
 
   this.addHilightedChamp = function( champ ) {
@@ -49,6 +61,7 @@ var TeamSelectCtrl = function( $scope, ChampionModel ) {
         self.champions.push( m[ 0 ] );
       }
     } );
+    this.updateSelectedChampionIds();
     this.hilightedChampions = [];
   };
   this.moveChampsRight = function() {
@@ -60,6 +73,7 @@ var TeamSelectCtrl = function( $scope, ChampionModel ) {
         self.selectedChampions.push( m[ 0 ] );
       }
     } );
+    this.updateSelectedChampionIds();
     this.hilightedChampions = [];
   };
 
@@ -68,6 +82,7 @@ var TeamSelectCtrl = function( $scope, ChampionModel ) {
       return 'selected';
     }
   };
+  this.moveChampsRight();
   return this;
 };
 

@@ -1,8 +1,8 @@
 'use strict';
 var module = angular.module( 'urfApp' );
-
-module.controller( 'teamViewCtrl', [ '$scope', '$state', function( $scope, $state ) {
-  $scope.championId = '';
+//todo: change to controllerAs
+module.controller( 'teamViewCtrl', [ '$scope', '$state', '$stateParams', function( $scope, $state, $stateParams ) {
+  $scope.selectedTeamId = $stateParams.team || '';
 
   $scope.changeState = function( view, params ) {
     if( !params ) {
@@ -11,10 +11,10 @@ module.controller( 'teamViewCtrl', [ '$scope', '$state', function( $scope, $stat
     $state.go( view, params );
   };
 
-  $scope.$watch( 'teamId', function( newVal, oldVal ) {
+  $scope.$watch( 'selectedTeamId', function( newVal, oldVal ) {
     console.log( newVal );
     if( newVal && newVal !== oldVal) {
-      $scope.changeState( 'main.team.id',  { id: $scope.teamId } );
+      $scope.changeState( 'main.team.id',  { team: newVal } );
     }
   });
   return this;
