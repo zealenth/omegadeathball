@@ -6,26 +6,27 @@ function TeamStatsCtrl( $scope, Model, $element, ChampionModel ) {
   this.champions = ChampionModel.prototype.CachedModels;
   var teamModel = new Model( { url: '/api/trees/' + this.teamId } );
   teamModel.fetch().then( function() {
-    self.initD3( $element );
-    //self.initD3Graph( $element );
+    var dataNodes = [];
+    _.each( teamModel.model.nodes, function( n ) {
+      _.each( n, function( n2 ) {
+        dataNodes = dataNodes.concat( n2 );
+      } );
+    } );
+    self.initD3( $element, dataNodes );
+    self.initD3Graph( $element, dataNodes );
   } );
   this.teamData = teamModel.model;
   return this;
 }
 
-TeamStatsCtrl.prototype.initD3 = function( $element ) {
+TeamStatsCtrl.prototype.initD3 = function( $element, dataNodes ) {
     var self = this;
     var width = 500, height = 500;
     var fill = d3.scale.ordinal().range(['#827d92','#827354','#523536','#72856a','#2a3285','#383435'])
     var svg = d3.select( $element[0] ).append("svg")
       .attr("width", width)
       .attr("height", height);
-    var dataNodes = [];
-    _.each( this.teamData.nodes, function( n ) {
-      _.each( n, function( n2 ) {
-        dataNodes = dataNodes.concat( n2 );
-      } );
-    } );
+
 
     for (var j = 0; j < dataNodes.length; j++) {
       dataNodes[j].radius = +dataNodes[j].kills / dataNodes[j].games * 12;
@@ -56,24 +57,23 @@ TeamStatsCtrl.prototype.initD3 = function( $element ) {
       .data(dataNodes)
       .enter()
       .append('g')
+      .on("mouseover", function (d) { showPopover.call(this, d); })
+      .on("mouseout", function (d) { removePopovers(); })
       .attr("class", "node")
       .attr("transform", function(d){
         return "translate(" + d.x + "," + d.y + ")";
       });
 
-    nodes
-      .append("circle")
+    nodes.append("circle")
       .attr("class", "node")
-
       .attr("r", function (d) { return d.radius; })
       .style("fill", function (d) { return fill(d.teamName); })
-      .on("mouseover", function (d) { showPopover.call(this, d); })
-      .on("mouseout", function (d) { removePopovers(); });
 
-  nodes.append( 'text' )
-    .attr("dy", ".3em")
-    .style("text-anchor", "middle")
-    .text(function(d) { return d.teamName; });
+
+    nodes.append( 'text' )
+      .attr("dy", ".3em")
+      .style("text-anchor", "middle")
+      .text(function(d) { return d.teamName; });
 
     var force = d3.layout.force();
 
@@ -171,46 +171,66 @@ TeamStatsCtrl.prototype.initD3 = function( $element ) {
     }
 };
 
-var mapper = {};
-var incr = 0;
+TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
+  var mapper = {};
+  var incr = 0;
 
-TeamStatsCtrl.prototype.initD3Graph = function( $element ) {
   var self = this;
-  var w = 960,
-    h = 500,
+  var w = 900,
+    h = 900,
     r = 6,
     fill = d3.scale.category20();
 
   var force = d3.layout.force()
-    .charge(-120)
-    .linkDistance(30)
+    .charge(-2200)
+    .linkDistance(100)
     .size([w, h]);
 
   var svg = d3.select($element[0]).append("svg:svg")
     .attr("width", w)
     .attr("height", h);
 
-
-    self.teamData.flat = [];
-    _.each(self.teamData.nodes, function(nArray){
-      _.each(nArray, function(nodeT){
-        _.each(nodeT, function(node){
-          self.teamData.flat.push(node);
-        });
-      });
-    });
-    console.log(self.teamData);
     var link = svg.selectAll("line")
       .data(self.teamData.edges)
       .enter().append("svg:line");
 
-    var node = svg.selectAll("circle")
-      .data(self.teamData.flat)
-      .enter().append("svg:circle")
-      .attr("r", r - .75)
-      .style("fill", function(d) { return fill(d.group); })
-      .style("stroke", function(d) { return d3.rgb(fill(d.group)).darker(); })
+    //var node = svg.selectAll("circle")
+    //  .data(self.teamData.flat)
+    //  .enter().append("svg:circle")
+    //  .attr("r", function(d) { return 20 + (d.kills / d.games * 5) })
+    //  .style("fill", function(d) { return fill(d.group); })
+    //  .style("stroke", function(d) { return d3.rgb(fill(d.group)).darker(); })
+    //  .call(force.drag);
+
+    var node = svg.selectAll("g.node")
+      .data(dataNodes)
+      .enter()
+      .append('g')
+      .attr("class", "node")
+      .attr("transform", function(d){
+        return "translate(" + Math.random() * w + "," + Math.random() * h + ")";
+      })
+      .on("mouseover", function (d) { showPopover.call(this, d); })
+      .on("mouseout", function (d) { removePopovers(); })
       .call(force.drag);
+
+    node
+      .append("circle")
+      .attr("class", "node")
+      .attr("r", function(d) { return 20 + (d.kills / d.games * 5) })
+      .style("fill", function(d) { return fill(d.group); })
+      .style("stroke", function(d) { return d3.rgb(fill(d.group)).darker(); });
+
+    node.append( 'text' )
+      .attr("dy", ".3em")
+      .style("text-anchor", "middle")
+      .text(function(d) {
+        return d.members.map(
+          function( e ) {
+            return self.champions[e].name;
+          }).join( ' ' );})
+      .call(wrap, 30);
+
 
     link.each(function(d){
       d.source = toNum(d.from);
@@ -219,7 +239,7 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element ) {
 
 
     force
-      .nodes(self.teamData.flat)
+      .nodes(dataNodes)
       .links(self.teamData.edges)
       .on("tick", tick)
       .start();
@@ -232,9 +252,12 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element ) {
         d.source.y -= k;
         d.target.y += k;
       });
-
-      node.attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
+      //
+      //node.attr("cx", function(d) { return d.x; })
+      //  .attr("cy", function(d) { return d.y; });
+      node.attr("transform", function(d){
+        return "translate(" + d.x + "," + d.y + ")";
+      });
 
       link.attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
@@ -243,7 +266,51 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element ) {
     }
 
 
+  function removePopovers () {
+    $('.popover').each(function() {
+      $(this).remove();
+    });
+  }
 
+  function showPopover (d) {
+    $(this).popover({
+      placement: 'auto top',
+      container: 'body',
+      trigger: 'manual',
+      html : true,
+      content: function() {
+        return "Team: <br/>" + d.members.map( function( e ) {
+            return ' ' + self.champions[e].name;
+          } ).join( '<br/>' ) + "<br/>Kills per game: " + d.kills / d.games +
+          "<br/>Games: " + d.games;
+      }
+    });
+    $(this).popover('show')
+  }
+
+  function wrap(text, width) {
+    text.each(function () {
+      var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 0.5, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+      while (word = words.pop()) {
+        line.push(word);
+        tspan.text(line.join(" "));
+        if (tspan.node().getComputedTextLength() > width) {
+          line.pop();
+          tspan.text(line.join(" "));
+          line = [word];
+          tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+        }
+      }
+    });
+  }
 
 
   function toNum(obj){
@@ -254,7 +321,6 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element ) {
     return mapper[obj];
   }
 };
-
 
 TeamStatsCtrl.$inject = [ '$scope', 'Model', '$element', 'ChampionModel' ];
 
