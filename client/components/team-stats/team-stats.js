@@ -295,7 +295,7 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
         word,
         line = [],
         lineNumber = 0,
-        lineHeight = 0.5, // ems
+        lineHeight = 1.5 * parseFloat(text.attr("dy")), // ems
         y = text.attr("y"),
         dy = parseFloat(text.attr("dy")),
         tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
@@ -306,7 +306,7 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
           line.pop();
           tspan.text(line.join(" "));
           line = [word];
-          tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+          tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + "em").text(word);
         }
       }
     });

@@ -13,9 +13,7 @@ exports.show = function(req, res) {
       return handleError(res, err);
     }
 
-    console.log(tree + " " + req.params.id);
     if (tree){
-
       return res.json(tree);
     } else {
       Node.findOne({pkey: req.params.id}, "-_id -__v", function (err, node) {
