@@ -5,6 +5,7 @@ function TeamStatsCtrl( $scope, Model, $element ) {
   var teamModel = new Model( { url: '/api/trees/' + this.teamId } );
   teamModel.fetch().then( function() {
     self.initD3( $element );
+    self.initD3Graph( $element );
   } );
   this.teamData = teamModel.model;
   return this;
@@ -148,7 +149,90 @@ TeamStatsCtrl.prototype.initD3 = function( $element ) {
         });
       };
     }
+};
 
+var mapper = {};
+var incr = 0;
+
+TeamStatsCtrl.prototype.initD3Graph = function( $element ) {
+  var self = this;
+  var w = 960,
+    h = 500,
+    r = 6,
+    fill = d3.scale.category20();
+
+  var force = d3.layout.force()
+    .charge(-120)
+    .linkDistance(30)
+    .size([w, h]);
+
+  var svg = d3.select($element[0]).append("svg:svg")
+    .attr("width", w)
+    .attr("height", h);
+
+
+    self.teamData.flat = [];
+    _.each(self.teamData.nodes, function(nArray){
+      _.each(nArray, function(nodeT){
+        _.each(nodeT, function(node){
+          self.teamData.flat.push(node);
+        });
+      });
+    });
+    console.log(self.teamData);
+    var link = svg.selectAll("line")
+      .data(self.teamData.edges)
+      .enter().append("svg:line");
+
+    var node = svg.selectAll("circle")
+      .data(self.teamData.flat)
+      .enter().append("svg:circle")
+      .attr("r", r - .75)
+      .style("fill", function(d) { return fill(d.group); })
+      .style("stroke", function(d) { return d3.rgb(fill(d.group)).darker(); })
+      .call(force.drag);
+
+    link.each(function(d){
+      d.source = toNum(d.from);
+      d.target = toNum(d.to);
+    });
+
+
+    force
+      .nodes(self.teamData.flat)
+      .links(self.teamData.edges)
+      .on("tick", tick)
+      .start();
+
+
+    function tick(e) {
+      // Push sources up and targets down to form a weak tree.
+      var k = 6 * e.alpha;
+      self.teamData.edges.forEach(function(d, i) {
+        d.source.y -= k;
+        d.target.y += k;
+      });
+
+      node.attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+
+      link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+    }
+
+
+
+
+
+  function toNum(obj){
+    if( typeof mapper[obj] === 'undefined' ) {
+      mapper[obj] = incr;
+      incr++;
+    }
+    return mapper[obj];
+  }
 };
 
 
