@@ -2,24 +2,22 @@
   .team-select-left {
     float:left;
     width: 150px;
-    height:200px;
+    height:80vh;
     margin-left:8px;
   }
   .team-select-left-container {
-    height:175px;
+    height:80vh;
     overflow-y: auto;
   }
   .team-select-middle {
     float:left;
-    width:30px;
-    height:200px;
+    width:10px;
+    height:80vh;
 
   }
 
   .team-select-right {
     float:left;
-    width: 150px;
-    height:200px;
     overflow-y: auto;
     margin-right:8px;
   }
@@ -29,4 +27,21 @@
   .selected {
     border: 1px solid darkblue;
   }
+
+  .closer {
+    /* float: right; */
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: 0.2;
+    filter: alpha(opacity=20);
+    height: 32px; }
+  .closer:hover, .closer:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.5;
+    filter: alpha(opacity=50); }
 }

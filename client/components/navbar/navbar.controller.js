@@ -2,14 +2,7 @@
 
 angular.module('urfApp')
   .controller('NavbarCtrl', [ '$scope', '$location', '$state', function ($scope, $location, $state) {
-    $scope.menu = [{
-      'title': 'Champions',
-      'state': 'main.champ'
-    },
-    {
-      'title': 'Teams',
-      'state': 'main.team'
-    }];
+    $scope.menu = [];
 
     $scope.isCollapsed = true;
 

@@ -21,7 +21,7 @@ exports.show = function(req, res) {
           return handleError(res, err);
         }
         if (!node) {
-          return res.send(404);
+          return res.send(new Tree());
         }
         var tree = new Tree();
         tree.pkey = req.params.id;

@@ -14,7 +14,7 @@ angular.module('urfApp', [
 ])
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
     $urlRouterProvider
-      .otherwise('/urf');
+      .otherwise('/urf/team');
 
     /*$locationProvider.html5Mode(true);*/
     console.log( $locationProvider );
