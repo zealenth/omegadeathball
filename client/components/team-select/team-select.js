@@ -80,6 +80,32 @@ var TeamSelectCtrl = function( $scope, ChampionModel ) {
       return 'selected';
     }
   };
+
+  this.submitChamp = function( keyEvent ) {
+    if (keyEvent.which === 13) {
+      var champs = $scope.$eval( "ctrl.champions | filter : ctrl.leftFilter | orderBy: 'name'");
+      if( champs.length ) {
+        this.addChamp( champs[0].id );
+      }
+      this.leftFilter='';
+    }
+  };
+  this.removeChamp = function( c ) {
+    var i = _.findIndex( self.selectedChampions,  function( e ) { return e.id === c; } );
+    if( i !== -1 ) {
+      var m = self.selectedChampions.splice( i, 1 );
+      self.champions.push( m[ 0 ] );
+    }
+    this.updateSelectedChampionIds();
+  };
+  this.addChamp = function( c ) {
+    var i = _.findIndex( self.champions,  function( e ) { return e.id === c; } );
+    if( i !== -1 ) {
+      var m = self.champions.splice( i, 1 );
+      self.selectedChampions.push( m[ 0 ] );
+    }
+    this.updateSelectedChampionIds();
+  };
   this.moveChampsRight();
   return this;
 };
