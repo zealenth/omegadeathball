@@ -1,0 +1,18 @@
+<div>
+  Team Stats Directive
+  {{ ctrl.teamData.teamId }}
+  Nodes:
+  <div ng-repeat="nodeLayer in ctrl.teamData.nodes">
+    Layer: {{$index + 1}}
+    <div ng-repeat="node in nodeLayer[0]">
+      Games: {{node.games}}<br/>
+      Kills: {{node.kills}}<br/>
+      Team: <span ng-repeat="member in node.members">
+        {{member}} {{ $last ? '' : '-' }}
+      </span><br/>
+    </div>
+  </div>
+  Edges:
+  <div ng-repeat="edge in ctrl.teamData.edges">{{edge.edgeId}}</div>
+  <svg></svg>
+</div>

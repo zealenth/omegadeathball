@@ -12,7 +12,6 @@ module.controller( 'teamViewCtrl', [ '$scope', '$state', '$stateParams', functio
   };
 
   $scope.$watch( 'selectedTeamId', function( newVal, oldVal ) {
-    console.log( newVal );
     if( newVal && newVal !== oldVal) {
       $scope.changeState( 'main.team.id',  { team: newVal } );
     }

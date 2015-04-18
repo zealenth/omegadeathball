@@ -25,8 +25,8 @@ var TeamSelectCtrl = function( $scope, ChampionModel ) {
 
   this.updateSelectedChampionIds = function() {
     var self = this;
-    self.teamId = self.selectedChampions.map( function( e ) { return e.id } )
-      .sort()
+    self.teamId = self.selectedChampions.map( function( e ) { return parseInt( e.id ) } )
+      .sort( function(a,b) { return a >=b } )
       .join( '-' );
     if( !$scope.$$phase && !$scope.$root.$$phase )
     {
