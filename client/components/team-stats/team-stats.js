@@ -187,7 +187,7 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
   var mapper = {};
   var incr = 0;
   var maxGames = d3.max( dataNodes, function(d) { return d.games; } );
-  var gameFill = d3.scale.ordinal().range(['#827d92','#827354','#523536','#72856a','#2a3285','#383435'])
+  var gameFill = d3.scale.ordinal().range(['#ee4035','#f37736','#fdf498','#7bc043','#0392cf'])
 
   var self = this;
   var w = 900,
@@ -228,6 +228,7 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
       .append("circle")
       .attr("class", "node")
       .attr("r", function(d) { return 10 + (d.kills / d.games * 10) })
+      .style("opacity", function(d){ return d.games == 0 ? 0.2 : d.games == 1 ? 0.5 : 1; })
       .style("stroke", function(d) { return d3.rgb(fill(d.group)).darker(); })
       .style("fill", function (d) { return gameFill( d.games ); });
 
