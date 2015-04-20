@@ -1,4 +1,6 @@
-//returns combination of a key
+var _ = require('underscore');
+
+//returns first level combination of a key
 //assuming key object is sorted
 //assuming key object is an array []
 exports.combination = function(entry){
@@ -17,4 +19,22 @@ exports.combination = function(entry){
 		}
 	}
 	return rv;
+}
+
+//returns combination all combinations of entry
+//assuming key object is sorted
+//assuming key object is an array []
+//assuming vessel is an object {}
+exports.traverseCombiantion = function(entry, vessel){
+  if(entry.length == 0){
+    return;
+  }
+  console.log(entry);
+  var results = exports.combination(entry, vessel);
+  var rv = [];
+  _.each(results, function(value){
+    vessel[value] = 0;
+    rv.push(exports.traverseCombiantion(value, vessel));
+  });
+  return rv;
 }
