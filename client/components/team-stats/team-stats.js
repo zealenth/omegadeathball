@@ -197,12 +197,11 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
 
   var force = d3.layout.force()
     .charge(-2200)
-    .linkDistance(100)
-    .size([w, h]);
+    .linkDistance(100);
 
   var svg = d3.select($element[0]).append("svg:svg")
-    .attr("width", w)
-    .attr("height", h);
+    .style("height", "100vh")
+    .style("width", "100%");
 
     var link = svg.selectAll("line")
       .data(self.teamData.edges)
@@ -221,9 +220,6 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
       .enter()
       .append('g')
       .attr("class", "node")
-      .attr("transform", function(d){
-        return "translate(" + Math.random() * w + "," + Math.random() * h + ")";
-      })
       .on("mouseover", function (d) { showPopover.call(this, d); })
       .on("mouseout", function (d) { removePopovers(); })
       .call(force.drag);
@@ -258,6 +254,8 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
       .on("tick", tick)
       .start();
 
+    resize();
+    d3.select(window).on("resize", resize);
 
     function tick(e) {
       // Push sources up and targets down to form a weak tree.
@@ -279,6 +277,12 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
         .attr("y2", function(d) { return d.target.y; });
     }
 
+  function resize() {
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    svg.attr("width", width).attr("height", height);
+    force.size([width, height]).resume();
+  }
 
   function removePopovers () {
     $('.popover').each(function() {
@@ -325,7 +329,6 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
       }
     });
   }
-
 
   function toNum(obj){
     if( typeof mapper[obj] === 'undefined' ) {

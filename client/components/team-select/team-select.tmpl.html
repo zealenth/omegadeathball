@@ -7,19 +7,12 @@
         {{champ.name}}
       </div>
     </div>
+    <br/>
+    <div  ng-repeat="champ in ctrl.selectedChampions"
+          ng-click="ctrl.addHilightedChamp( champ.id )" ng-class="ctrl.selectedClass( champ.id )">
 
-  </div>
-  <div class="team-select-middle">
-
-  </div>
-  <div class="team-select-right">
-    <div class="team-select-right-container"  jqyoui-droppable="{ onDrop: 'onDropCallback'}" data-drop="true" ng-model="ctrl.selectedChampions">
-      <div  ng-repeat="champ in ctrl.selectedChampions"
-           ng-click="ctrl.addHilightedChamp( champ.id )" ng-class="ctrl.selectedClass( champ.id )">
-
-        <input type="button" class="closer" value="x: {{champ.name}}"
-          ng-click="ctrl.removeChamp( champ.id )" />
-       </div>
+      <input type="button" class="closer" value="x: {{champ.name}}"
+             ng-click="ctrl.removeChamp( champ.id )" />
     </div>
   </div>
   <div style="clear:both;"></div>
