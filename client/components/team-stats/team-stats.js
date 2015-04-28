@@ -187,7 +187,8 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
   var mapper = {};
   var incr = 0;
   var maxGames = d3.max( dataNodes, function(d) { return d.games; } );
-  var gameFill = d3.scale.ordinal().range(['#ee4035','#f37736','#fdf498','#7bc043','#0392cf'])
+  //var gameFill = d3.scale.ordinal().range(['#ee4035','#f37736','#fdf498','#7bc043','#0392cf'])
+  var gameFill = ['#ee4035','#f37736','#fdf498','#7bc043','#0392cf'];
 
   var self = this;
   var w = 900,
@@ -196,8 +197,9 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
     fill = d3.scale.category20();
 
   var force = d3.layout.force()
-    .charge(-2200)
-    .linkDistance(100);
+    .charge(-4000)
+    .chargeDistance(400)
+    .linkDistance(200);
 
   var svg = d3.select($element[0]).append("svg:svg")
     .style("height", "100vh")
@@ -214,23 +216,23 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
     //  .style("fill", function(d) { return fill(d.group); })
     //  .style("stroke", function(d) { return d3.rgb(fill(d.group)).darker(); })
     //  .call(force.drag);
-
     var node = svg.selectAll("g.node")
       .data(dataNodes)
       .enter()
       .append('g')
       .attr("class", "node")
       .on("mouseover", function (d) { showPopover.call(this, d); })
-      .on("mouseout", function (d) { removePopovers(); })
+      .on("mouseout", function () { removePopovers(); })
       .call(force.drag);
 
     node
       .append("circle")
       .attr("class", "node")
-      .attr("r", function(d) { return 10 + (d.kills / d.games * 10) })
+      .attr("r", function(d) { return 10 + (1 +  Math.log(d.games + 1)) * (d.kills / d.games ) })
+      .attr("nodeName", function(d) { return d.pkey; })
       .style("opacity", function(d){ return d.games == 0 ? 0.2 : d.games == 1 ? 0.5 : 1; })
       .style("stroke", function(d) { return d3.rgb(fill(d.group)).darker(); })
-      .style("fill", function (d) { return gameFill( d.games ); });
+      .style("fill", function (d) { return gameFill[ d.participants - 1 ]; });
 
     node.append( 'text' )
       .attr("dy", ".3em")
@@ -243,11 +245,15 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
       .call(wrap, 30);
 
 
+    _.each(dataNodes, function(d){
+      mapper[d.pkey] = incr;
+      incr++;
+    });
+
     link.each(function(d){
       d.source = toNum(d.from);
       d.target = toNum(d.to);
     });
-
 
     force
       .nodes(dataNodes)
@@ -265,6 +271,13 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
         d.source.y -= k;
         d.target.y += k;
       });
+
+      //var q = d3.geom.quadtree(nodes),
+      //  i = 0,
+      //  n = nodes.length;
+      //
+      //while (++i < n) q.visit(collide(nodes[i]));
+
       //
       //node.attr("cx", function(d) { return d.x; })
       //  .attr("cy", function(d) { return d.y; });
@@ -277,6 +290,30 @@ TeamStatsCtrl.prototype.initD3Graph = function( $element, dataNodes ) {
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
     }
+
+  function collide(node) {
+    var r = node.radius + 16,
+      nx1 = node.x - r,
+      nx2 = node.x + r,
+      ny1 = node.y - r,
+      ny2 = node.y + r;
+    return function(quad, x1, y1, x2, y2) {
+      if (quad.point && (quad.point !== node)) {
+        var x = node.x - quad.point.x,
+          y = node.y - quad.point.y,
+          l = Math.sqrt(x * x + y * y),
+          r = node.radius + quad.point.radius;
+        if (l < r) {
+          l = (l - r) / l * .5;
+          node.x -= x *= l;
+          node.y -= y *= l;
+          quad.point.x += x;
+          quad.point.y += y;
+        }
+      }
+      return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+    };
+  }
 
   function resize() {
     var width = window.innerWidth;

@@ -11,8 +11,11 @@ function Node(){
   return this;
 }
 
-function nodeAvg(node){
-  return (node.games > 0 ? node.kills / node.games : 0);
+exports.nodeWeight = function(node){
+  var avg = node.games > 0 ? node.kills / node.games : 0;
+  //log weigh the games offset by 1 to avoid log(1) = 0 && log(0) = u
+  avg *= Math.log(node.games+1);
+  return avg;
 }
 
 function sortNumber(a,b) {
@@ -119,7 +122,7 @@ exports.processMatch = function(body, nodeMap, edgeMap) {
         nodeMap[childKey].participants = child.length;
       }
 
-      addEdge(childKey,key, nodeAvg(nodeMap[key]));
+      addEdge(childKey,key, exports.nodeWeight(nodeMap[key]));
     });
   }
 

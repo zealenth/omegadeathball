@@ -25,16 +25,19 @@ exports.combination = function(entry){
 //assuming key object is sorted
 //assuming key object is an array []
 //assuming vessel is an object {}
-exports.traverseCombiantion = function(entry, vessel){
+//assuming links is an array []
+exports.traverseCombiantion = function(entry, vessel, links){
   if(entry.length == 0){
     return;
   }
-  console.log(entry);
-  var results = exports.combination(entry, vessel);
+  //console.log(entry);
+  var results = exports.combination(entry);
   var rv = [];
   _.each(results, function(value){
+    links.push([value, entry]);
     vessel[value] = 0;
-    rv.push(exports.traverseCombiantion(value, vessel));
+    var next = exports.traverseCombiantion(value, vessel, links);
+    rv.push(next);
   });
   return rv;
 }

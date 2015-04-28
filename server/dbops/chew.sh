@@ -15,3 +15,4 @@ do
 done
 
 rm tmp/*
+rmdir tmp
